@@ -49,4 +49,12 @@ export class CourseService {
 
     return course;
   }
+
+  async dragCourseSections(courseId: string, sections: string[]) {
+    const course = await this.courseModel
+      .findByIdAndUpdate(courseId, { $set: { sections } }, { new: true })
+      .populate({ path: 'sections', populate: { path: 'lessons' } });
+
+    return course.sections;
+  }
 }
