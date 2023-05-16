@@ -53,6 +53,26 @@ export class AdminService {
     return 'Success';
   }
 
+  async getAllUsers(limit: number) {
+    const users = await this.userModel.find().limit(limit).sort({ createdAt: -1 }).exec();
+
+    return users.map(user => this.getUserSpecificFiled(user));
+  }
+
+  async searchUser(email: string, limit: number) {
+    let users: UserDocument[];
+    if (email) {
+      users = await this.userModel.find({}).exec();
+    } else {
+      users = await this.userModel.find({}).limit(limit).exec();
+    }
+    const searchedUser = users.filter(
+      user => user.email.toLowerCase().indexOf(email.toLowerCase()) !== -1,
+    );
+
+    return searchedUser.map(user => this.getUserSpecificFiled(user));
+  }
+
   getSpecificField(instructor: InstructorDocument) {
     return {
       approved: instructor.approved,
@@ -63,6 +83,16 @@ export class AdminService {
         email: instructor.author.email,
         job: instructor.author.job,
       },
+    };
+  }
+
+  getUserSpecificFiled(user: UserDocument) {
+    return {
+      email: user.email,
+      fullName: user.fullName,
+      _id: user._id,
+      role: user.role,
+      createdAt: user.createdAt,
     };
   }
 }
