@@ -75,4 +75,17 @@ export class CourseController {
   async getAllAdminCourses() {
     return this.courseService.getAdminCourses();
   }
+
+  @HttpCode(200)
+  @Get('detailed-course/:slug')
+  getDetailedCourse(@Param('slug') slug: string) {
+    return this.courseService.getDetailedCourse(slug);
+  }
+
+  @HttpCode(200)
+  @Put('enroll-user/:courseId')
+  @Auth()
+  enrollUser(@User('_id') _id: string, @Param('courseId') courseId: string) {
+    return this.courseService.enrollUser(_id, courseId);
+  }
 }
